@@ -1,5 +1,6 @@
 const express = require("express");
 const Task = require("../models/TaskModel");
+const { requireAuth } = require("../middlewares/authMiddlewares")
 const {
   getUniqueTaskController,
   getAllTasksController,
@@ -9,14 +10,14 @@ const {
 } = require("../controllers/taskControllers");
 const router = express.Router();
 
-router.get("/", getAllTasksController);
+router.get("/", requireAuth, getAllTasksController);
 
-router.get("/:id", getUniqueTaskController);
+router.get("/:id", requireAuth,getUniqueTaskController);
 
-router.post("/", createTaskController);
+router.post("/", requireAuth,createTaskController);
 
-router.delete("/:id", deleteTaskController);
+router.delete("/:id", requireAuth,deleteTaskController);
 
-router.patch("/:id", updateTaskController);
+router.patch("/:id", requireAuth,updateTaskController);
 
 module.exports = router;

@@ -3,11 +3,11 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 
 dotenv.config();
-const secret = process.env.TOKEN_SECRET;
+
 const maxAge = 3 * 24 * 60 * 60;
 
 const createToken = (id) => {
-  return jwt.sign({ id }, secret, { expiresIn: maxAge });
+  return jwt.sign({ id },  process.env.TOKEN_SECRET,{ expiresIn: maxAge });
 };
 
 const errorHandler = (err) => {
@@ -42,7 +42,7 @@ const signUpController = async (req, res) => {
     const token = createToken(user._id);
 
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-    res.status(200).json({ user: user._id });
+    res.status(201).json({ user: user._id });
   } catch (err) {
     const errors = errorHandler(err);
     res.status(400).json(errors);
