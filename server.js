@@ -24,9 +24,7 @@ app.get("*", checkUser);
 app.use("/api/auth", authRoutes);
 
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rpiky5a.mongodb.net/todobackend`
-  )
+  .connect(process.env.MONGO_URI)
   .then(() => {
     app.listen(port, () => {
       console.log(`Server is going on ${port}`);
