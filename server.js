@@ -13,6 +13,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const dbPort = process.env.MONGO_URI;
 
 app.use(cors());
 app.use(express.json());
@@ -23,7 +24,7 @@ app.get("*", checkUser);
 app.use("/api/auth", authRoutes);
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(dbPort)
   .then(() => {
     app.listen(port, () => {
       console.log(`Server is going on ${port}`);
