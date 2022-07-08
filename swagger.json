@@ -21,60 +21,89 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
-    "/tasks": {
+    "/api/tasks": {
       "get": {
         "tags": ["Tasks"],
         "summary": "Get all tasks in system",
         "responses": {
           "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Tasks"
-            }
-          }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "Task": {
-      "required": ["name", "_id", "companies"],
-      "properties": {
-        "_id": {
-          "type": "integer",
-          "uniqueItems": true
-        },
-        "isPublic": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string"
-        },
-        "books": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "amount": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        "companies": {
-          "type": "array",
-          "items": {
-            "type": "string"
+            "description": "OK"
+          },
+          "400": {
+            "description": "Cannot get"
+          },
+          "404": {
+            "description": "Not found"
           }
         }
       }
     },
-    "Tasks": {
-      "type": "array",
-      "$ref": "#/definitions/Task"
+    "/api/tasks/:id": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get single task by id",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/IdTask"
+            }
+          },
+          "400": {
+            "description": "Cannot do that"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/tasks/create": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Create new task in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "400": {
+            "description": "Cannot do that"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    }
+
+  },
+
+  "definitions": {
+    "Task": {
+      "required": ["title", "description"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "uniqueItems": true,
+          "required": true
+        },
+        "description": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "IdTask": {
+      "required": ["_id"],
+      "properties": {
+        "_id": {
+          "type": "integer",
+          "uniqueItems": true
+        }
+      }
     }
   }
 }
