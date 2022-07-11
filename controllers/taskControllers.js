@@ -1,13 +1,16 @@
 const { Task } = require("../models/TaskModel");
+const jwt = require("jsonwebtoken");
 const User = require("../models/UserModel");
 
 const getAllTasksController = async (req, res) => {
   const { userId } = req.body;
-  const { cookie } = req.headers;
-  const [id, username, password] = cookie.split('.');
-  const user = await User.findOne({ id });
-  const tasks = await Task.find({ userId: user._id }).sort({ createdAt: -1 });
-  res.status(200).json(tasks);
+  const cookie = req.cookies.jwt;
+  jwt.verify(cookie, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+    const id = decodedToken.id;
+    const user = await User.findOne({ _id: id });
+    const tasks = await Task.find({ userId: user.id }).sort({ createdAt: -1 });
+    res.status(200).json(tasks);
+  });
 };
 
 const getUniqueTaskController = async (req, res) => {
@@ -21,22 +24,24 @@ const getUniqueTaskController = async (req, res) => {
 
 const createTaskController = async (req, res) => {
   const { title, description, userId } = req.body;
-  const { cookie } = req.headers;
-  const [id, username, password] = cookie.split('.');
+  const cookie = req.cookies.jwt;
 
-  try {
-    const user = await User.findOne({ id });
-    console.log(user);
-    const task = await Task.create({
-      title,
-      description,
-      userId: user._id,
-    });
-    res.status(200).json(task);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-    console.log(error);
-  }
+  jwt.verify(cookie, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+    const id = decodedToken.id;
+    try {
+      const user = await User.findOne({ _id: id });
+
+      const task = await Task.create({
+        title,
+        description,
+        userId: user._id,
+      });
+      res.status(200).json(task);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+      console.log(error);
+    }
+  });
 };
 
 const deleteTaskController = async (req, res) => {
